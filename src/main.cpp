@@ -13,9 +13,21 @@ static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
 
 class Menu {
 public:
-     void showMenu() {
+    void showMenu() {
         initscr();
-        printw("My Menu!\n");
+        if(!has_colors()) {
+            printw("Sorry your terminal is not supported.\n");
+        } else {
+            if(start_color() != OK) {
+                printw("Unable to start colors.\n");
+            } else {
+                init_pair(1, COLOR_WHITE, COLOR_BLUE);
+                bkgd(COLOR_PAIR(1));
+                attrset(A_BOLD);
+                printw("My Menu!\n"); 
+                attroff(A_BOLD);
+            }
+        }
         refresh();
         getch();
         endwin();
