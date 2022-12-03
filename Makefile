@@ -1,7 +1,7 @@
 all: run
 
 run:
-	g++ src/main.cpp -l sqlite3
+	g++ src/main.cpp -lsqlite3 -lncurses
 
 removeDatabase:
 	rm -i data/passwordVault.db

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <ncurses.h>
 #include "sqlite3.h"
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
@@ -10,21 +11,33 @@ static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
     return 0;
 }
 
+class Menu {
+public:
+     void showMenu() {
+        initscr();
+        printw("My Menu!\n");
+        refresh();
+        getch();
+        endwin();
+    }
+};
+
+
 int main(int argc, char **argv) {
     sqlite3 *db = NULL;
     int rc = sqlite3_open("data/passwordVault.db", &db);
     char *zErrMsg = NULL;
-    std::string sql = "CREATE TABLE User(" \
+    std::string sql = "CREATE TABLE IF NOT EXISTS User(" \
         "userID         INT PRIMARY KEY NOT NULL," \
-        "name           TEXT            NOT NULL," \
-        "lastName       TEXT            NOT NULL," \
-        "email          CHAR(120)       NOT NULL," \
+        "name           VARCHAR(50)     NOT NULL," \
+        "lastName       VARCHAR(50)     NOT NULL," \
+        "email          VARCHAR(80)     NOT NULL," \
         "age            INT             NOT NULL," \
-        "gender         CHAR            NOT NULL," \
-        "address        CHAR(50)," \
-        "validationCode CHAR(7)         NOT NULL," \
-        "username       CHAR(50)        NOT NULL," \
-        "password       CHAR(50)        NOT NULL)";
+        "gender         CHAR(1)         NOT NULL," \
+        "address        VARCHAR(50)," \
+        "validationCode VARCHAR(7)      NOT NULL," \
+        "username       VARCHAR(50)     NOT NULL," \
+        "password       VARCHAR(50)     NOT NULL)";
 
     if(rc) {
         // database failed to open
@@ -45,5 +58,7 @@ int main(int argc, char **argv) {
     }
 
     sqlite3_close(db);
+    Menu myMenu;
+    myMenu.showMenu();
     return 0;
 }
