@@ -12,8 +12,32 @@ static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
 }
 
 class Menu {
+private:
+    const int menumax = 3;
+    int menuitem = 0;
 public:
+    void drawMenu() {
+        char mainmenu[] = "Main Menu";
+        char menu[menumax][21] = {
+            "Login",
+            "Register",
+            "Exit"
+        };
+        clear();
+        addstr(mainmenu);
+        for(int i = 0; i < menumax; ++i) {
+            if(i == menuitem) {
+                attron(A_REVERSE);
+            }
+            mvaddstr(3 + (i * 2), 20, menu[i]);
+            attroff(A_REVERSE);
+        }
+        mvaddstr(17, 25, "Use arrow keys to move; Enter to select:");
+        refresh();
+    }
+
     void showMenu() {
+        int key = '\0';
         initscr();
         if(!has_colors()) {
             printw("Sorry your terminal is not supported.\n");
@@ -24,12 +48,31 @@ public:
                 init_pair(1, COLOR_WHITE, COLOR_BLUE);
                 bkgd(COLOR_PAIR(1));
                 attrset(A_BOLD);
-                printw("My Menu!\n"); 
+                drawMenu();
                 attroff(A_BOLD);
+                keypad(stdscr, TRUE);
+                noecho();
+                do {
+                    key = getch();
+                    switch(key) {
+                    case KEY_DOWN:
+                        menuitem++;
+                        if(menuitem > menumax - 1)
+                            menuitem = 0;
+                        break;
+                    case KEY_UP:
+                        menuitem--;
+                        if(menuitem < 0)
+                            menuitem = menumax - 1;
+                        break;
+                    default:
+                        break;
+                    }
+                    drawMenu();
+                } while(key != '\n');
             }
         }
-        refresh();
-        getch();
+        echo();
         endwin();
     }
 };
@@ -72,5 +115,6 @@ int main(int argc, char **argv) {
     sqlite3_close(db);
     Menu myMenu;
     myMenu.showMenu();
+    
     return 0;
 }
