@@ -16,11 +16,10 @@ void Menu::showMenu() {
         if(start_color() != OK) {
             printw("Unable to start colors.\n");
         } else {
-            init_pair(1, COLOR_WHITE, COLOR_BLUE);
+            init_pair(1, COLOR_BLACK, COLOR_GREEN);
             bkgd(COLOR_PAIR(1));
             attrset(A_BOLD);
             drawMenu();
-            attroff(A_BOLD);
             keypad(stdscr, TRUE);
             noecho();
             do {
@@ -44,24 +43,26 @@ void Menu::showMenu() {
         }
     }
     echo();
+    attroff(A_BOLD);
     endwin();
 }
 
 void Menu::drawMenu() {
-    std::string mainmenu = "Main Menu";
+    std::string title = "Main Menu - Password Vault";
+    std::string instructions = "Use arrow keys to move; Enter to select.";
     std::string menu[MENUMAX] = {
         "Login",
         "Register",
         "Exit"
     };
     clear();
-    addstr(mainmenu.c_str());
+    mvaddstr(1, COLS/2 - title.size()/2, title.c_str());
     for(int i = 0; i < MENUMAX; ++i) {
         if(i == m_menuitem)
             attron(A_REVERSE);
-        mvaddstr(3 + (i * 2), 20, menu[i].c_str());
+        mvaddstr(5 + (i * 2), COLS/2 - menu[i].size()/2, menu[i].c_str());
         attroff(A_REVERSE);
     }
-    mvaddstr(17, 25, "Use arrow keys to move; Enter to select:");
+    mvaddstr(14, COLS/2 - instructions.size()/2, instructions.c_str());
     refresh();
 }
