@@ -1,10 +1,30 @@
 #include "menu.h"
 
 Menu::Menu() {
-    m_menuitem = 3;
+    m_menuitem = MenuItem::login;
 }
 
 Menu::~Menu() {
+}
+
+void Menu::drawMenu() {
+    std::string title = "Main Menu - Password Vault";
+    std::string instructions = "Use arrow keys to move; Enter to select.";
+    std::string menu[MENUMAX] = {
+        "Login",
+        "Register",
+        "Exit"
+    };
+    clear();
+    mvaddstr(1, COLS/2 - title.size()/2, title.c_str());
+    for(int i = 0; i < MENUMAX; ++i) {
+        if(i == m_menuitem)
+            attron(A_REVERSE);
+        mvaddstr(5 + (i * 2), COLS/2 - menu[i].size()/2, menu[i].c_str());
+        attroff(A_REVERSE);
+    }
+    mvaddstr(14, COLS/2 - instructions.size()/2, instructions.c_str());
+    refresh();
 }
 
 void Menu::showMenu() {
@@ -26,14 +46,14 @@ void Menu::showMenu() {
                 key = getch();
                 switch(key) {
                     case KEY_DOWN:
-                        m_menuitem++;
+                        m_menuitem = static_cast<MenuItem>(static_cast<int>(m_menuitem) + 1);
                         if(m_menuitem > MENUMAX - 1)
-                            m_menuitem = 0;
+                            m_menuitem = MenuItem::login;
                         break;
                     case KEY_UP:
-                        m_menuitem--;
+                        m_menuitem = static_cast<MenuItem>(static_cast<int>(m_menuitem) - 1);
                         if(m_menuitem < 0)
-                            m_menuitem = MENUMAX - 1;
+                            m_menuitem = MenuItem::quit;
                         break;
                     default:
                         break;
@@ -47,22 +67,6 @@ void Menu::showMenu() {
     endwin();
 }
 
-void Menu::drawMenu() {
-    std::string title = "Main Menu - Password Vault";
-    std::string instructions = "Use arrow keys to move; Enter to select.";
-    std::string menu[MENUMAX] = {
-        "Login",
-        "Register",
-        "Exit"
-    };
-    clear();
-    mvaddstr(1, COLS/2 - title.size()/2, title.c_str());
-    for(int i = 0; i < MENUMAX; ++i) {
-        if(i == m_menuitem)
-            attron(A_REVERSE);
-        mvaddstr(5 + (i * 2), COLS/2 - menu[i].size()/2, menu[i].c_str());
-        attroff(A_REVERSE);
-    }
-    mvaddstr(14, COLS/2 - instructions.size()/2, instructions.c_str());
-    refresh();
+MenuItem Menu::getMenuitem() {
+    return m_menuitem;
 }

@@ -49,6 +49,19 @@ int main(int argc, char **argv) {
     sqlite3_close(db);
     Menu myMenu;
     myMenu.showMenu();
+    switch(myMenu.getMenuitem()) {
+    case MenuItem::login:
+        std::cout << "Login\n";
+        break;
+    case MenuItem::record:
+        std::cout << "Registration\n";
+        break;
+    case MenuItem::quit:
+        std::cout << "Quitting\n";
+        break;
+    default:
+        break;
+    }
     
     return 0;
 }
